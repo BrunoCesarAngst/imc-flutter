@@ -1,0 +1,9 @@
+INFO: scrcpy 1.16 <https://github.com/Genymobile/scrcpy>
+adb: error: failed to get feature set: no devices/emulators found
+ERROR: "adb push" returned with value 1
+INFO: scrcpy 1.16 <https://github.com/Genymobile/scrcpy>
+adb: error: failed to get feature set: device unauthorized.
+This adb server's $ADB_VENDOR_KEYS is not set
+Try 'adb kill-server' if that seems wrong.
+Otherwise check for a confirmation dialog on your device.
+ERROR: "adb push" returned with value 1
