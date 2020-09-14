@@ -1,117 +1,299 @@
+import 'dart:math';
+import 'dart:ui' as ui;
+
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(new MyCalculatorApp());
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyCalculatorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Calculadora IMC', //indice de masa corporal
+      home: MyCalculator(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
+class MyCalculator extends StatefulWidget {
+  State<StatefulWidget> createState() => Calculadora();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class Calculadora extends State<MyCalculator> {
+  final controllerPeso = TextEditingController();
+  final controllerAltura = TextEditingController();
+  final myFormKey = GlobalKey<FormState>();
+  final d = Decimal;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  String mostreImc = "";
+  String pesoSugerido = "";
+
+  // Claculadora Mulher
+  void pesoIdealMulher() {
+    int pesoidealm = 21;
+    int decimals = 2; // so mostra os decimais
+    int fad = pow(10, decimals);
+
+    // validando se algum campo está vazio
+    if (myFormKey.currentState.validate()) {
+      double peso = double.parse(controllerPeso.text);
+      double altura = double.parse(controllerAltura.text);
+      double rtaAltura = (altura) / 100;
+      double alturaAoQuadrado = rtaAltura * rtaAltura;
+      double resultado = peso / alturaAoQuadrado;
+
+      double d = resultado;
+      d = (d * fad).round() / fad;
+
+      //formula para sugerir o peso da pessoa
+      double sugerido = (pesoidealm * peso) / d;
+      sugerido = (sugerido * fad).round() / fad;
+
+      setState(() {
+        mostreImc = "IMC é: $d";
+      });
+
+      setState(() {
+        pesoSugerido = "Peso ideal é: $sugerido Kg";
+      });
+    }
+  }
+
+  //formula para o homem
+  void pesoIdealHomem() {
+    int pesoidealh = 24;
+    int decimals = 2;
+    int fad = pow(10, decimals);
+
+    // validando se algum campo está vazio
+    if (myFormKey.currentState.validate()) {
+      double peso = double.parse(controllerPeso.text);
+      double altura = double.parse(controllerAltura.text);
+      double rtaAltura = (altura) / 100;
+      double alturaAoQuadrado = rtaAltura * rtaAltura;
+      double resultado = peso / alturaAoQuadrado;
+
+      double d = resultado;
+      d = (d * fad).round() / fad;
+
+      //formula para sugerir o peso da pessoa
+      double sugerido = (pesoidealh * peso) / d;
+      sugerido = (sugerido * fad).round() / fad;
+
+      setState(() {
+        mostreImc = "IMC é: $d";
+      });
+
+      setState(() {
+        pesoSugerido = "Peso ideal é: $sugerido Kg";
+      });
+    }
+  }
+
+  void operacaoMatematica() {
+
+    if (myFormKey.currentState.validate()) {
+      double numero1 = double.parse(controllerPeso.text);
+      double numero2 = double.parse(controllerAltura.text);
+
+      double resultado = numero1 / numero2;
+
+      setState(() {
+        mostreImc = "A divisão é: $resultado";
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    // final ui.Size logicalSize = MediaQuery.of(context).size;
+    // final double _height = logicalSize.height;
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+        title: Text('Calculadora IMC'),
+        backgroundColor: Color(0xFFf01DFD7),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {},
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: Form(
+          key: myFormKey,
+          child: SingleChildScrollView(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    width: 500,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFf01DFD7),
+                      borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(80),
+                          bottomLeft: Radius.circular(80)),
+                    ),
+                    child: Stack(
+                      children: <Widget>[
+                        Align(
+                          alignment: Alignment.center,
+                          child: new Image(
+                            width: 200.0,
+                            height: 150.0,
+                            image: new AssetImage('assets/images/scale.png'),
+                          ),
+                          )
+                      ],
+                    ),
+                  ),
+
+                  //agregamos un Container
+                  Container(
+                    padding: EdgeInsets.only(top: 40),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          width: 200,
+                          height: 50,
+                          padding: EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(50)),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(color: Colors.black, blurRadius: 5)
+                            ]),
+                            child: TextFormField(
+                              controller: controllerPeso,
+                              validator: (value) {
+                                if (value.isEmpty) return "Digite o peso em Kg";
+                              },
+                              decoration: InputDecoration(
+                                hintText: "Peso Kg",
+                                icon: Icon(Icons.account_balance_wallet,
+                                color: Colors.purpleAccent)
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                        ),
+                        Divider(),
+                        Container(
+                          width: 200,
+                          height: 50,
+                          padding: EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(50)),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(color: Colors.black, blurRadius: 5)
+                            ]),
+                            child: TextFormField(
+                              controller: controllerAltura,
+                              validator: (value) {
+                                if (value.isEmpty) return "Digita Altura Cm";
+                              },
+                              decoration: InputDecoration(
+                                hintText: "Altura Cm",
+                                icon: Icon(Icons.present_to_all,
+                                color: Colors.blueAccent)
+                              ),
+                              keyboardType: TextInputType.number,
+                            ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 30.0,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      FlatButton(
+                        onPressed: pesoIdealMulher,
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0)),
+                          color: Colors.pinkAccent,
+                          padding: EdgeInsets.all(10.0),
+                          child: Column(
+                            children: <Widget>[Icon(Icons.person), Text('Mulher')],
+                          ),
+                      ),
+                      VerticalDivider(),
+                      FlatButton(
+                        onPressed: pesoIdealHomem,
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0)),
+                          color: Colors.blueAccent,
+                          padding: EdgeInsets.all(10.0),
+                          child: Column(
+                            children: <Widget>[Icon(Icons.person), Text('Homem')],
+                          ),
+                      ),
+                    ],
+                  ),
+                  Divider(
+                    height: 40.0,
+                  ),
+                  //caixa de resultado
+                  Container(
+                    height: 50.0,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFE2E64), Color(0xFFfF781D8)]
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(15))),
+                      //criamos o resultado do TextFormField
+                      child: Center(
+                        child: Text(
+                          mostreImc,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                  ),
+                  Divider(
+                    height: 15.0,
+                  ),
+                  Container(
+                    height: 50.0,
+                    width: 300,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFf04B4AE), Color(0xFFf81F7F3)]
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(15))),
+                      //criamos o resultado do TextFormField
+                      child: Center(
+                        child: Text(
+                          pesoSugerido,
+                          style: TextStyle(
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                  ),
+                  Divider(
+                    height: 1,
+                  ),
+                  new Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Stack(
+                      children: <Widget>[
+                        Align(
+                          child: new Image(
+                            width: 300.0,
+                            height: 200.0,
+                            image: new AssetImage('assets/images/imcx.png'),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ))),
     );
   }
 }
